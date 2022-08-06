@@ -5,8 +5,23 @@ let state = {
 }
 
 const start = () => {
+  readLocalStorage()
   createBoard()
   newGame()
+}
+const readLocalStorage = () => {
+  if (!window.localStorage) {
+    return
+  }
+
+  const savedGamesFromLocalStorage = window.localStorage.getItem('saved-games')
+
+  if (savedGamesFromLocalStorage) {
+    state.savedGames = JSON.parse(savedGamesFromLocalStorage)
+  }
+}
+const writeToLocalStorage = () => {
+  window.localStorage.setItem('saved-games', JSON.stringify(state.savedGames))
 }
 const createBoard = () => {
   state.board = []
@@ -18,8 +33,6 @@ const createBoard = () => {
 const newGame = () => {
   resetGame()
   render()
-
-  console.log(state.currentGame)
 }
 const render = () => {
   renderBoard()
@@ -59,8 +72,6 @@ const handleNumberClick = event => {
   } else {
     addNumberToGame(value)
   }
-
-  console.log(state.currentGame)
   render()
 }
 const renderButtons = () => {
@@ -173,9 +184,8 @@ const saveGame = () => {
   }
 
   state.savedGames.push(state.currentGame)
+  writeToLocalStorage()
   newGame()
-
-  console.log(state.savedGames)
 }
 const resetGame = () => {
   state.currentGame = []
@@ -190,8 +200,6 @@ const randomGame = () => {
     const randomNumber = Math.ceil(Math.random() * 60)
     addNumberToGame(randomNumber)
   }
-
-  console.log(state.currentGame)
   render()
 }
 
